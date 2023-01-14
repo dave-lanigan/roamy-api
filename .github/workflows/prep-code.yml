@@ -32,3 +32,6 @@ jobs:
       
       - name: Test with pytest
         run: pytest
+
+      - name: Commit isort and black updates
+        run: git commit -am "github actions formatting"
