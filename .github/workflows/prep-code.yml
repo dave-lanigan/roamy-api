@@ -28,7 +28,7 @@ jobs:
         run: isort app
 
       - name: lint with pylint
-        run: pylint app
+        run: pylint app --fail-under=7.0
       
       - name: Test with pytest
         run: pytest
