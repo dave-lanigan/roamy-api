@@ -10,22 +10,7 @@ on:
     branches: [master, main]
 
 jobs:
-  fix-code: # job name
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3 # use a github action
-      
-      - name: Python Linter
-        uses: sunnysid3up/python-linter@v0.1-beta.7
-        with:
-          source: "app"
-          strict: "low"
-          #mypy-options: "--ignore-missing-imports --show-error-codes"
-          mypy-options: false
-          pylint-options: "--rcfile=.pylintrc"
-          #isort-options: "-w 100"
-
-  test:
+  fix-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3 # use a github action
@@ -35,6 +20,14 @@ jobs:
       
       - name: Install dependencies
         run: python -m pip install pytest -r requirements.dev.txt
+
+      - name: Format with black
+        run: black app
+
+      - name: Sort imports with isort
+        run: isort app
+
+      - name: lint with pylint
       
       - name: Test with pytest
         run: pytest

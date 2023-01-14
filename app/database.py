@@ -1,4 +1,5 @@
 import pathlib
+
 from sqlmodel import Session, SQLModel, create_engine
 
 p = pathlib.Path(__file__).parent / "roamy.db"

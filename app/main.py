@@ -36,7 +36,7 @@ def root():
 
 
 @app.get("/cities/quick-data", response_model=list[CityShortData])
-def get_cities_short_data_( db: Session = Depends(get_session) ):
+def get_cities_short_data_(db: Session = Depends(get_session)):
     """Short data endpoint."""
     return get_cities_short_data(db)
 
