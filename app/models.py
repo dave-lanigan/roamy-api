@@ -1,9 +1,13 @@
+"""
+Database models for tables.
+"""
 import uuid
 from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
 class Place(SQLModel, table=True):
+    """A table for places."""
 
     __tablename__ = "places"
 
@@ -20,7 +24,8 @@ class Place(SQLModel, table=True):
     city_tag: str
 
 
-class StreamItem(SQLModel, table=False):
+class StreamItem(SQLModel):
+    """A table object for stream items from reddit and twitter."""
 
     title: str
     content: Optional[str] = None
@@ -31,6 +36,7 @@ class StreamItem(SQLModel, table=False):
 
 
 class CityShortData(SQLModel, table=True):
+    """A table for city short data."""
 
     __tablename__ = "city_short_data"
 

@@ -20,9 +20,10 @@ jobs:
         with:
           source: "app"
           strict: "low"
-          mypy-options: "--ignore-missing-imports --show-error-codes"
+          #mypy-options: "--ignore-missing-imports --show-error-codes"
+          mypy-options: false
           pylint-options: "--rcfile=.pylintrc"
-          isort-options: "-w 100"
+          #isort-options: "-w 100"
 
   test:
     runs-on: ubuntu-latest

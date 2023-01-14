@@ -1,11 +1,9 @@
-from functools import lru_cache
-from typing import Optional
+"""API App and endpoints module."""
 
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session
 
-from .schemas import StreamItem
 from .crud import get_cities_short_data, get_city_streams, get_places_info
 from .database import db_connect, get_session
 from .models import CityShortData, Place
@@ -27,21 +25,25 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup():
+    """On start up."""
     db_connect()
 
 
 @app.get("/")
 def root():
+    """Root endpoint."""
     return "Hi,there."
 
 
 @app.get("/cities/quick-data", response_model=list[CityShortData])
-def get_cities_short_data_(kind: str = "l", db: Session = Depends(get_session)):
+def get_cities_short_data_( db: Session = Depends(get_session) ):
+    """Short data endpoint."""
     return get_cities_short_data(db)
 
 
 @app.get("/info/{city}/places", response_model=list[Place])
 def get_city_places_info_(city: str, kind: str, db: Session = Depends(get_session)):
+    """Places info endpoint."""
     return get_places_info(city, kind, db)
 
 
@@ -50,4 +52,5 @@ def get_city_places_info_(city: str, kind: str, db: Session = Depends(get_sessio
     # response_model=list[StreamItem]
 )
 def get_city_streams_(city: str, db: Session = Depends(get_session)):
+    """City streams endpoint."""
     return get_city_streams(city, db)
