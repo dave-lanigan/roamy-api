@@ -1,12 +1,15 @@
 # Packages: isort for formatting imports, black for formatting code
 # pylint for linting code and pytest for testing code in test dir
-name: Code Prep: Format, lint and test
-on: [push, pull]
-  branches:
-    - master
-    - main
 
-job:
+name: Code Prep - Format, lint and test
+
+on:
+  pull_request:
+    branches: [master, main]
+  push:
+    branches: [master, main]
+
+jobs:
   format-lint: # job name
     runs-on: ubuntu-latest
     steps:
