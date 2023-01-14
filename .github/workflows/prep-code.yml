@@ -40,4 +40,6 @@ jobs:
           git config user.email "<>"
 
       - name: Commit isort and black updates
-        run: git commit -am "github actions formatting"
+        run: |
+          git commit -am "github actions formatting"
+          git push origin master
