@@ -1,7 +1,3 @@
-import json
-import pathlib
-import sqlite3
-import httpx
 from functools import lru_cache
 from typing import Optional
 
@@ -10,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, SQLModel, create_engine
 
 from schema import StreamItem
-from models import CityShortData
+from models import CityShortData, Place
 from crud import (
     get_city_streams,
     get_places_info,
@@ -47,7 +43,7 @@ def root():
 
 @app.get(
     "/cities/quick-data",
-    response_model = list[CityShortData]
+    response_model=list[CityShortData]
 )
 def get_cities_short_data_(
     kind: str = "l",
@@ -56,7 +52,10 @@ def get_cities_short_data_(
     return get_cities_short_data(db)
 
 
-@app.get("/info/{city}/places")
+@app.get(
+    "/info/{city}/places",
+    response_model=list[Place]
+)
 def get_city_places_info_(
     city: str,
     kind: str,
@@ -72,18 +71,3 @@ def get_city_places_info_(
 def get_city_streams_(city: str, db: Session = Depends( get_session )):
     return get_city_streams(city, db)
 
-
-@app.post("/posts/groups/{city}", status_code=201)
-def post_group_city_post_(city: str, info: dict):
-    """
-    {
-        "title":"",
-        "content":"",
-        "user":""
-    }
-    """
-    db['posts']['group'][city].append(info)
-    json_object = json.dumps(db, indent=4)
-    with open("test-db.json","w+") as jf:
-        jf.write(json_object)
-    return info

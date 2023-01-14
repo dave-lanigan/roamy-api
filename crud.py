@@ -27,13 +27,40 @@ def remove_url(text):
         return text
 
 
-def get_reddit_streams(city:str):
+def get_reddit_topic(city:str):
+    
+    city = city.replace("-","")
+    
+    URL: str = f"https://www.reddit.com/t/{city}/hot.json"
+
+    resp_data = httpx.get(URL).json()
+    if 'data' in resp_data:
+        posts = resp_data['data']['children'][1:]
+
+        formatted_posts = []
+        for post in posts:
+            content = post['data']['selftext']
+            
+            pd = StreamItem(
+                title=post['data']['title'],
+                content=post['data']['selftext'],
+                link=post['data']['url'],
+                source="reddit"
+            )
+            formatted_posts.append( pd )
+        return formatted_posts
+    else:
+        return []
+
+
+def get_reddit_sub(city:str):
     
     city = city.replace("-","")
 
-    URL: str = f"https://www.reddit.com/r/{city}/hot.json"
+    if city=="lisbon":
+        city="lisboa"
 
-    #URL: str = f"https://www.reddit.com/t/{city}/hot.json" # topic need to weed out different countries tho
+    URL: str = f"https://www.reddit.com/r/{city}/hot.json"
 
     resp_data = httpx.get(URL).json()
     if 'data' in resp_data:
@@ -129,41 +156,11 @@ def get_city_streams(city, db):
     q = select(T).where(T.tag==city)
     row = db.exec(q).one()
     q = f"{row.name} {row.country}"
-    rs = get_reddit_streams(city)
+    rs = get_reddit_sub(city)
     ts = get_twitter_streams( q )
     s = rs + ts
     random.shuffle(s)
     return s
-
-
-key = "AIzaSyB_Q6wpMTf6C7Ic6JiSTi88qama4ZofIjs"
-
-
-def get_place_details(place_id: str):
-    URL: str = "https://maps.googleapis.com/maps/api/place/details/json?"
-    qps = {
-        "place_id": place_id,
-        "key": key
-    }
-    resp = httpx.get(URL, params=qps)
-    results = resp.json()['result']
-    return results.get('website',None)
-
-
-def get_place_photo(photo_ref: str):
-    if photo_ref:
-        URL: str = "https://maps.googleapis.com/maps/api/place/photo"
-
-        qps = {
-            "maxwidth":400,
-            "photo_reference": photo_ref,
-            "key": key
-        }
-
-        resp = httpx.get(URL, params=qps)
-        soup = BeautifulSoup(resp.content, features="html.parser")
-        tag = soup.findAll('a', href=True)[0]
-        return tag['href']
 
 
 def get_places_info(
@@ -171,46 +168,5 @@ def get_places_info(
     kind: str,
     db,
 ):
-    URL = f"https://maps.googleapis.com/maps/api/place/textsearch/json"
-
-    T = CityShortData
-    q = select(T).where(T.tag==city)
-    row = db.exec(q).one()
-
-    location = f"{row.lat},{row.lon}"
-
-    print(location)
-    
-    qps = {
-        "location": location,
-        "radius": 6000,
-        "key":key,
-    }
-
-    if kind=="food":
-        qps["type"]="restaurant"
-        qps["query"]="best restaurant"
-    elif kind=="coffee":
-        qps["type"]="cafe"
-        qps["query"]="coffee shop"
-    elif kind=="fun":
-        qps["type"]="tourist_attraction"
-
-    
-    resp = httpx.get(URL, params=qps)
-    out = resp.json()
-    places=[]
-    for place in out['results']:
-        if 'photos' in place and 'point_of_interest' in place['types'] and place["user_ratings_total"]>10 and place["rating"]>4.5:
-            info = {
-                "name": place['name'],
-                "lat": place['geometry']['location']['lat'],
-                "lon": place['geometry']['location']['lng'],
-                #"blurb": "This is a quick blurb about the restaurent.",
-                "address": place['formatted_address'].split(",")[0],
-                "img": get_place_photo( place['photos'][0]['photo_reference'] ),
-                "link": get_place_details( place['place_id'] ),
-                "rating": place["rating"]
-            }
-            places.append( info )
-    return places
+    q = select(Place).where(Place.city_tag==city).where(Place.kind==kind)
+    return db.exec(q).all()

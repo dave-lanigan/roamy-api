@@ -3,17 +3,21 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
-class Place(SQLModel, table=False):
+class Place(SQLModel, table=True):
 
     __tablename__ = "places"
 
+    pid: Optional[int] = Field(primary_key=True)
+    kind: str
     name: str
     address: str
     blurb: Optional[str]
-    city_tag: str
+    link: Optional[str]
     lat: float
     lon: float
     img: str
+    rating: float
+    city_tag: str
 
 
 class StreamItem(SQLModel, table=False):
