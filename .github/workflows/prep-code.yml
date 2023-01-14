@@ -28,6 +28,7 @@ jobs:
         run: isort app
 
       - name: lint with pylint
+        run: pylint app
       
       - name: Test with pytest
         run: pytest
