@@ -1,15 +1,11 @@
 """API App and endpoints module."""
 
 from fastapi import Depends, FastAPI
-
 from fastapi.middleware.cors import CORSMiddleware
-
 from sqlmodel import Session
 
 from .crud import get_cities_short_data, get_city_streams, get_places_info
-
 from .database import db_connect, get_session
-
 from .models import CityShortData, Place
 
 app = FastAPI()
