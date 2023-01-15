@@ -39,7 +39,7 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
 
-      - name: Commit isort and black updates
-        run: |
-          git commit -am "github actions formatting"
-          git push origin master
+      - uses: EndBug/add-and-commit@v9
+        with:
+          auther_name: 'Github Bot'
+          message: 'Format with black and isort'
