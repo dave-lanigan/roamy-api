@@ -1,5 +1,6 @@
 """API App and endpoints module."""
 
+from typing import List
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
@@ -35,13 +36,19 @@ def root():
     return "Hi,there."
 
 
-@app.get("/cities/quick-data", response_model=list[CityShortData])
+@app.get(
+    "/cities/quick-data",
+    #response_model=List[CityShortData]
+)
 def get_cities_short_data_(db: Session = Depends(get_session)):
     """Short data endpoint."""
     return get_cities_short_data(db)
 
 
-@app.get("/info/{city}/places", response_model=list[Place])
+@app.get(
+    "/info/{city}/places",
+    #response_model=List[Place]
+)
 def get_city_places_info_(city: str, kind: str, db: Session = Depends(get_session)):
     """Places info endpoint."""
     return get_places_info(city, kind, db)
