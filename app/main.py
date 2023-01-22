@@ -11,16 +11,6 @@ from .database import db_connect, get_session
 from .models import CityShortData, Place
 
 app = FastAPI()
-<<<<<<< HEAD
-=======
-origins = [
-    "*"
-    # "http://localhost",
-    # "http://localhost:3000",
-    # "http://127.0.0.1",
-    # "http://127.0.0.1:3000",
-]
->>>>>>> fa52e9d75abb4ddce9fdc08043bf120fad823d0f
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
